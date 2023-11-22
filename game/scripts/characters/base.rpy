@@ -2,6 +2,31 @@
 init python:
     from enum import Enum, unique
 
+    @unique 
+    class Traits(Enum):
+        DRIVEN = "driven"
+        SELF_CENTERED = "self_centered"
+        EFFEMINATE = "effeminate"
+        SELF_CONCIOUS = "self_conscious"
+        POLYAMORY = "polyamory"
+        HELPFUL = "helpful"
+        STUBBORN = "stubborn"
+        HONEST = "honest"
+        WELL_MEANING = "well_meaning"
+        GREGARIOUS = "gregarious" # Should we just change this to sociable
+        BISEXUAL = "bisexual"
+        MANIPULATIVE = "manipulative"
+        LOYAL = "loyal"
+        INNOCENT_LOOKING = "innocent_looking"
+        SHY = "shy"
+        INCEST = "incest"
+        EX_PARTY_GIRL = "ex_party_girl"
+        VAIN = "vain"
+        DEVOTED_TO_FAMILY = "devoted_to_family"
+        STRICT = "strict"
+        BRAVE = "brave"
+        EXHIBITIONIST = "exhibitionist"
+
     @unique
     class GameCharacter(Enum):
         MC = 0
@@ -20,6 +45,8 @@ init python:
             self._image = image
             self._vars = {}
             self._booleans = {}
+            self._traits = {}
+            self._hidden_traits = {}
 
         @property
         def id(self):
@@ -50,5 +77,22 @@ init python:
             assert(isinstance(value, bool)), "set_bool only accepts booleans"
             self._booleans[name] = value
 
+        @property
+        def traits(self):
+            list(filter(lambda x: (self._traits[x] > 0), self._traits.keys()))
+
+        def get_trait(self, name):
+            if name in self._traits:
+                return self._traits[name]
+            else if name in self._hidden_traits:
+                return self._hidden_traits[name]
+            else:
+                return 0
+
+        def has_trait(self, name):
+            return name in self._traits or name in self._hidden_traits
+
         def __call__(self, what, **kwargs):
             return Character(self._name, image=self._image)(what, kwargs)
+
+        
