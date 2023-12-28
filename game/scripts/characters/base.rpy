@@ -2,41 +2,28 @@
 init python:
     from enum import Enum, unique
 
+    @unique
+    class Likes(Enum):
+        ANAL = 'anal',
+        BLOWJOB = 'blowjob',
+        BEHIND = 'behind'
+
     @unique 
-    class Traits(Enum):
-        DRIVEN = "driven"
-        SELF_CENTERED = "self_centered"
-        EFFEMINATE = "effeminate"
-        SELF_CONCIOUS = "self_conscious"
-        POLYAMORY = "polyamory"
-        HELPFUL = "helpful"
-        STUBBORN = "stubborn"
-        HONEST = "honest"
-        WELL_MEANING = "well_meaning"
-        GREGARIOUS = "gregarious" # Should we just change this to sociable
-        BISEXUAL = "bisexual"
-        MANIPULATIVE = "manipulative"
-        LOYAL = "loyal"
-        INNOCENT_LOOKING = "innocent_looking"
-        SHY = "shy"
-        INCEST = "incest"
-        EX_PARTY_GIRL = "ex_party_girl"
-        VAIN = "vain"
-        DEVOTED_TO_FAMILY = "devoted_to_family"
-        STRICT = "strict"
-        BRAVE = "brave"
-        EXHIBITIONIST = "exhibitionist"
+    class Vars(Enum):
+        DEPRAVITY = 'depravity',
+        SUGGESTIBILITY = 'suggestibility'
 
     @unique
     class GameCharacter(Enum):
         MC = 0
-        LAND_LADY = 1
-        YOUNGER_ROOM_MATE = 2
-        OLDER_ROOM_MATE = 3
+        LANDLADY = 1
+        YOUNGER_ROOMMATE = 2
+        OLDER_ROOMMATE = 3
         PROFESSOR = 4
         PHARMA_LAB_CEO = 5
         PHARMA_LAB_LEAD = 6
         NIGHT_GUARD = 7
+        SECRETARY = 8
 
     class BaseCharacter(object):
         def __init__(self, id, name, image):
@@ -46,7 +33,6 @@ init python:
             self._vars = {}
             self._booleans = {}
             self._traits = {}
-            self._hidden_traits = {}
 
         @property
         def id(self):
@@ -70,6 +56,12 @@ init python:
         def set_var(self, name, value):
             self._vars[name] = value
 
+        def increment_var(self, name, value):
+            self._vars[name] = self._vars[name] + value      
+
+        def decrement_var(self, name, value):
+            self._vars[name] = self._vars[name] + value      
+
         def is_true(self, name):
             return self._booleans[name] if name in self._booleans else false
 
@@ -79,18 +71,47 @@ init python:
 
         @property
         def traits(self):
-            list(filter(lambda x: (self._traits[x] > 0), self._traits.keys()))
+            return list(filter(lambda x: (self._traits[x]["hidden"] == False and self._traits[x]["value"] > 0), self._traits.keys())) 
+
+        @traits.setter
+        def set_traits(self, traits, hidden = False):
+            self._traits = self._traits or []
+            for trait in traits:
+                if trait in self._traits:
+                    self.increase_trait(trait, 1)
+                else:
+                    self.add_trait(trait, 1, False)
+
+        @property
+        def hidden_traits(self):
+            return list(filter(lambda x: (self._traits[x]["hidden"] == True and self._traits[x]["value"] > 0), self._traits.keys())) 
+
+
+        @hidden_traits.setter 
+        def set_hidden_traits(self, traits):
+            self.set_traits(traits, True)
+
+
+        def add_trait(self, name, value, hidden):
+            if name in self._traits:
+                self.increase_trait(name, value)
+            else:
+                self._traits[name] = {"hidden": hidden, "value": value}
 
         def get_trait(self, name):
             if name in self._traits:
                 return self._traits[name]
-            else if name in self._hidden_traits:
-                return self._hidden_traits[name]
             else:
                 return 0
 
         def has_trait(self, name):
-            return name in self._traits or name in self._hidden_traits
+            return name in self._traits
+
+        def increase_trait(self, name, value = 1):
+            if name in self._traits:
+                self._traits[name] = self._traits[name] + value
+            else:
+                add_trait(name, value, False)
 
         def __call__(self, what, **kwargs):
             return Character(self._name, image=self._image)(what, kwargs)

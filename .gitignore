@@ -8,4 +8,5 @@ game/gui/
 **/*.rpymc
 game/cache
 game/saves
+**/errors.txt
 
