@@ -31,12 +31,19 @@ init python:
         def happened(self):
             True if self._triggered_count > 0 else False
 
-        def get_labels(self, location, time):
-            if location == self._location \
-                and (self._triggered_count == 0 or self._repeatable) \
-                and time.is_time(self._hours, self._weekdays, self._day_forward) \
-                and self._is_prerequisities_done():
-                return self._label
+        def is_active(self, location, time):
+            return location == self._location \
+                    and (self._triggered_count == 0 or self._repeatable) \
+                    and time.is_time(self._hours, self._weekdays, self._day_forward) \
+                    and self._is_prerequisities_done()                
+
+        @property
+        def repeatable(self):
+            return self._repeatable
+
+        @property
+        def trigger_count(self):
+            return self._triggered_count
 
         def _is_prerequisities_done(self):
             return next((event.happened for event in events if not event.happened), True)
@@ -112,3 +119,37 @@ init python:
                 return None
             return set([x for xs in filter(lambda x: x is not None, [process_entry(x) for x in hours]) for x in xs])
 
+        @staticmethod
+        def select_event(location_events, location, time):
+
+            def add_previous(items):
+                # Assign areas for probabilities between 0-1
+                sum_of_prev = 0
+                for item in items:
+                    sum_of_prev += item[0]
+                    yield (sum_of_prev, item[1])
+
+            def get_probabilities(items):
+                # Calculate weighted probabilities
+                trigger_counts = [x.trigger_count for x in items] 
+                sum_of_counts = sum(trigger_counts)
+                weights = [(sum_of_counts - x) / sum_of_counts for x in trigger_counts]
+                sum_of_weights = sum(weights)
+                return [x / sum_of_weights for x in weights]            
+
+            events = [x for x in location_events if x.is_active(location, time)]
+            event_count = len(events)
+            if event_count <= 1:
+                return events[0] if event_count == 1 else None
+            single = next((x for x in events if x.repeatable), None)
+            if single:
+                return single
+
+            # We know that there is only repeatable events left and there is at least two of them            
+            items =  dict(add_previous(sorted(zip(get_probabilities(events), events))))
+            value = renpy.random.random()
+            return next(items[x] for x in items if x >= value)[1]
+
+            
+            
+                

@@ -23,3 +23,5 @@ default locations = {
     Place.PHARMA_INCINERATOR: pharma_incinerator
 }
 
+init python:
+    home_mc_room.add_accessible_location(home_kitchen)
