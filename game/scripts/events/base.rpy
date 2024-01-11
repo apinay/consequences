@@ -27,6 +27,16 @@ init python:
             self._prerequisities = prerequisities
             self._conditions = condititions
 
+        def __eq__(self, other):
+            return isinstance(other, Location) and self._id == other.id
+
+        def __ne__(self, other):
+            return not isinstance(other, Location) or self._id != other.id
+
+        @property
+        def label(self):
+            return self._label
+
         @property
         def happened(self):
             True if self._triggered_count > 0 else False

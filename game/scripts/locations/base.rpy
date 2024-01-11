@@ -4,17 +4,17 @@ init python:
 
     @unique
     class Place(Enum):
-        HOME_MC_ROOM = 1,
-        HOME_KITCHEN = 2,
-        HOME_LANDLADY_ROOM = 3,
-        HOME_YOUNGER_ROOMMATE_ROOM = 4,
-        HOME_OLDER_ROOMMATE_ROOM = 5,
-        PHARMA_RECEPTION = 6,
-        PHARMA_LAB = 7,
-        PHARMA_STORAGE_ROOM = 8,
-        PHARMA_GUARD_ROOM = 9,
-        PHARMA_INCINERATOR = 10
-
+        CITY_MAP = 1,
+        HOME_MC_ROOM = 2,
+        HOME_KITCHEN = 3,
+        HOME_LANDLADY_ROOM = 4,
+        HOME_YOUNGER_ROOMMATE_ROOM = 5,
+        HOME_OLDER_ROOMMATE_ROOM = 6,
+        PHARMA_RECEPTION = 7,
+        PHARMA_LAB = 8,
+        PHARMA_STORAGE_ROOM = 9,
+        PHARMA_GUARD_ROOM = 10,
+        PHARMA_INCINERATOR = 11
 
     class Location(object):
         def __init__(self, id, name, icon, background, default_event=None):
@@ -42,7 +42,7 @@ init python:
             return self._background
 
         @property
-        def get_accessible_locations(self):
+        def accessible_locations(self):
             return self._accessible_locations
 
         def add_accessible_location(self, location):
