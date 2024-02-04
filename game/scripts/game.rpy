@@ -2,6 +2,8 @@
 default time = Time()
 default selected_location = Place.HOME_MC_ROOM
 
+image img_black = Solid("#000000")
+
 screen game_screen(location):
     window id "game_screen"
     add location.background

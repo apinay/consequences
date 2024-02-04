@@ -1,21 +1,6 @@
 
 init python:
-    import re
-    from enum import Enum, unique
-
-    hour_regex = "([0-1]?[0-9]|2[0-3])"
-    # extract_range = re.compile("^{hour_regex}$|^{hour_regex}-{hour_regex}$".format(hour_regex=hour_regex))
-    extract_range = re.compile("^{hour_regex}-{hour_regex}$".format(hour_regex=hour_regex))
-
-    @unique
-    class Weekday(Enum):
-        MONDAY = 1
-        TUESDAY = 2
-        WEDNESDAY = 3
-        THURSDAY = 4
-        FRIDAY = 5
-        SATURDAY = 6
-        SUNDAY = 7
+    from util import weekday
 
     class Time(object):
         def __init__(self):            
